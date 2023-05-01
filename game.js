@@ -4,6 +4,7 @@ import {getCookie, setCookie, getLocalDateDay} from "./utils.js";
 //VARIABLES--------------------------------------------------------
 
 let r = document.querySelector(':root');
+let cursor = {x: 0, y: 0}
 
 //variables holding the solution
 let solution = null;
@@ -464,12 +465,12 @@ function gameOverFunc()
             if (winDiv.style.display != "block") //then you lost
             {
                 dailyStreak = 0;
-                setCookie("streak", "0", 365, true, true);
+                setCookie("streak", "0", 365, false, true);
             }
             else //you won
             {
                 dailyStreak += 1;
-                setCookie("streak", dailyStreak.toString(), 365, true, true);
+                setCookie("streak", dailyStreak.toString(), 365, false, true);
             }
         }
 
@@ -592,7 +593,7 @@ function loadDaGame()
         {
             if (getCookie("streak", true) == "")
             {
-                setCookie("streak", "0", 365, true, true);
+                setCookie("streak", "0", 365, false, true);
                 dailyStreak = 0;
             }
             else
@@ -657,11 +658,34 @@ function loadDaGame()
 //moving the info div with the mouse
 function moveInfoDiv(e)
 {
-    symbolInfoDiv.style.left = e.clientX + 8 + 'px';
-    symbolInfoDiv.style.top = e.clientY + window.scrollY + 8 + 'px';
+    clearInterval(symbolInfoDiv.moveMe);
+    clearTimeout(symbolInfoDiv.stopMe);
+    symbolInfoDiv.moveMe = window.setInterval(function()
+                                            {
+                                                symbolInfoDiv.style.left = cursor.x + 2 + 'px';
+                                                symbolInfoDiv.style.top = cursor.y + window.scrollY + 2 + 'px';
+                                            }, 20);  
+    symbolInfoDiv.stopMe = window.setTimeout(function()
+                                            {
+                                                clearInterval(symbolInfoDiv.moveMe);
+                                                console.log("the thing")
+                                            }, 2000)                                
+}
+
+function stopInfoDiv()
+{
+    clearInterval(symbolInfoDiv.moveMe);
+    clearTimeout(symbolInfoDiv.stopMe);
+    symbolInfoDiv.style.display = "none";
 }
 
 //GAME----------------------------------------------
+
+window.onmousemove = function(e)
+{
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
+}
 
 //opens and closes the emails tab
 emailToggle.onclick = function()
@@ -729,7 +753,7 @@ guessPreview.onmouseenter = function(e)
 
 guessPreview.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv();
 }
 
 //so when the mouse enters the info div, the div stays anyway
@@ -740,7 +764,7 @@ symbolInfoDiv.onmouseenter = function(e)
 
 symbolInfoDiv.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv();
 }
 
 //add info boxes for each header
@@ -752,7 +776,7 @@ rarityRow.onmouseenter = function(e)
 
 rarityRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 coinRow.onmouseenter = function(e)
@@ -763,7 +787,7 @@ coinRow.onmouseenter = function(e)
 
 coinRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 countRow.onmouseenter = function(e)
@@ -774,7 +798,7 @@ countRow.onmouseenter = function(e)
 
 countRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 appRow.onmouseenter = function(e)
@@ -785,7 +809,7 @@ appRow.onmouseenter = function(e)
 
 appRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 itemAppRow.onmouseenter = function(e)
@@ -796,7 +820,7 @@ itemAppRow.onmouseenter = function(e)
 
 itemAppRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 percRow.onmouseenter = function(e)
@@ -807,7 +831,7 @@ percRow.onmouseenter = function(e)
 
 percRow.onmouseleave = function()
 {
-    symbolInfoDiv.style.display = "none";
+    stopInfoDiv()
 }
 
 //when the player submits a guess
